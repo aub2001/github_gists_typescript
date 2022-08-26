@@ -1,25 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import {useSelector} from "react-redux";
+import {RootStore} from  "./state/store";
+import GlobalStyle from "./GlobalStyles";
+import { ThemeProvider } from "styled-components";
+import Navbar from "./components/Navbar";
+import ThemeToggle from "./components/ThemeToggle";
+import HomePage from "./components/HomePage";
+import SingleGist from "./components/SingleGist";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 function App() {
+
+  const theme = useSelector((state: RootStore) => state.theme)
+  const [searchText , setSearchText] = useState<string | undefined>("");
+  const callback = (searchText : string | undefined) => {
+    setSearchText(searchText);
+  }
+
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.StrictMode>
+      <Router>
+        <ThemeProvider theme={theme}>
+          <GlobalStyle />        
+            <Navbar onSubmit={callback}/>
+            <ThemeToggle/>
+              <Routes>  
+                  <Route exact path="/"  element={<HomePage searchText={searchText} /> } />
+                  <Route path="/gist/:id" element={<SingleGist /> } />
+              </Routes>
+        </ThemeProvider>
+      </Router>
+    </React.StrictMode>
   );
 }
 
